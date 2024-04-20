@@ -2,3 +2,15 @@
 #
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+
+raw_data:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/dt_simulated_weekly.csv
+
+primary_data:
+  type: pandas.ParquetDataset
+  filepath: data/03_primary/primary_data.paruqet
+
+feature_data:
+  type: pandas.ParquetDataset
+  filepath: data/04_feature/feature_data.paruqet

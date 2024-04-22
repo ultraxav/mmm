@@ -14,3 +14,15 @@ primary_data:
 feature_data:
   type: pandas.ParquetDataset
   filepath: data/04_feature/feature_data.paruqet
+
+fitted_model:
+  type: mmm.commons.datasets.DelayedSaturatedMMMModel
+  filepath: data/06_models/fitted_model.nc
+
+model_summary:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/model_summary.csv
+
+model_plot:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/model_plot.jpeg

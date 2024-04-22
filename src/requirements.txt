@@ -17,3 +17,4 @@ traitlets<5.10.0
 
 # Project Libs
 kedro-datasets[pandas.CSVDataset, pandas.ParquetDataset]==2.0.0
+pymc_marketing==0.5.0

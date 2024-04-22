@@ -1,0 +1,77 @@
+model_specification:
+  features_to_drop:
+    - facebook_I
+    - search_clicks_P
+    - competitor_sales_B
+
+  objective_variable: revenue
+
+  adstock_max_lag: 8
+  
+  channel_columns:
+    - tv_S
+    - ooh_S
+    - print_S
+    # - facebook_I
+    # - search_clicks_P
+    - search_S
+    # - competitor_sales_B
+    - facebook_S
+    - newsletter
+
+  control_columns:
+    - event1
+    - event2
+    # - day_of_year
+    - t
+
+  date_column: date_week
+  
+  model_config:
+    alpha:
+      dist: Beta
+      kwargs:
+        alpha: 1
+        beta: 3
+    beta_channel:
+      dist: HalfNormal
+      kwargs:
+        sigma: 2
+    gamma_control:
+      dist: Normal
+      kwargs:
+        mu: 0
+        sigma: 2
+    gamma_fourier:
+      dist: Laplace
+      kwargs:
+        b: 1
+        mu: 0
+    intercept:
+      dist: Normal
+      kwargs:
+        mu: 0
+        sigma: 2
+    lam:
+      dist: Gamma
+      kwargs:
+        alpha: 3
+        beta: 1
+    likelihood:
+      dist: Normal
+      kwargs:
+        sigma:
+          dist: HalfNormal
+          kwargs:
+            sigma: 2
+
+  sampler_config:
+    progressbar: true
+
+  validate_data: true
+
+  yearly_seasonality: 2
+
+  target_accept: 0.99
+
+  chains: 4

@@ -20,7 +20,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 feature_engineering,
                 inputs="primary_data",
-                outputs="feature_data",
+                outputs=["feature_data", "test_data"],
                 name="feature_engineering",
             ),
         ]

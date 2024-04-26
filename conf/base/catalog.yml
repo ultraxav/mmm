@@ -15,6 +15,10 @@ feature_data:
   type: pandas.ParquetDataset
   filepath: data/04_feature/feature_data.paruqet
 
+test_data:
+  type: pandas.ParquetDataset
+  filepath: data/04_feature/test_data.paruqet
+
 fitted_model:
   type: mmm.commons.datasets.DelayedSaturatedMMMModel
   filepath: data/06_models/fitted_model.nc
@@ -23,6 +27,22 @@ model_summary:
   type: pandas.CSVDataset
   filepath: data/07_model_output/model_summary.csv
 
-model_plot:
+model_trace:
   type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/model_plot.jpeg
+  filepath: data/07_model_output/model_trace.jpeg
+
+model_posterior_predictive:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/model_posterior_predictive.jpeg
+
+model_components_contributions:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/model_components_contributions.jpeg
+
+model_contribution_breakdown:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/model_contribution_breakdown.jpeg
+
+model_contributions:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/model_contributions.csv

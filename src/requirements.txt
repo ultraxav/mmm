@@ -1,5 +1,5 @@
 # Core Libs
-black~=22.0
+black[jupyter]~=22.0
 flake8>=3.7.9, <5.0
 ipython>=7.31.1, <8.0; python_version < '3.8'
 ipython~=8.10; python_version >= '3.8'

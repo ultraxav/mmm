@@ -25,4 +25,10 @@ def feature_engineering(data: pd.DataFrame) -> pd.DataFrame:
 
     data["t"] = range(data.shape[0])
 
-    return data
+    data["day_of_year"] = data["day_of_year"] / 365
+
+    data_train = data.loc[: int(data.shape[0] * 0.8), :]
+
+    data_test = data.loc[int(data.shape[0] * 0.8) + 1 :, :]
+
+    return data_train, data_test

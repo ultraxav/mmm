@@ -3,7 +3,6 @@ This is a boilerplate pipeline 'data_science'
 generated using Kedro 0.18.14
 """
 
-import os
 import warnings
 from typing import Any, Dict
 
@@ -117,22 +116,21 @@ def model_diagnostics(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
         "Contribution Breakdown Over Time", fontsize=16
     ).get_figure()
 
-    # Model Mean Contributions Over Time
-    get_mean_contributions_over_time_df = mmm.compute_mean_contributions_over_time(
-        original_scale=True
-    ).reset_index()
-
     return (
         model_summary,
         model_trace,
         model_posterior_predictive,
         model_components_contributions,
         model_contribution_breakdown,
-        get_mean_contributions_over_time_df,
     )
 
 
-def channel_parameters(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
+def channel_contributions(mmm: DelayedSaturatedMMM) -> Any:
+
+    # Model Mean Contributions Over Time
+    get_mean_contributions_over_time_df = mmm.compute_mean_contributions_over_time(
+        original_scale=True
+    ).reset_index()
 
     # Channel Alphas
     channel_alphas = mmm.plot_channel_parameter(param_name="alpha", figsize=(9, 5))
@@ -156,6 +154,7 @@ def channel_parameters(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
     )
 
     return (
+        get_mean_contributions_over_time_df,
         channel_alphas,
         channel_lam,
         channel_contribution,
@@ -163,3 +162,30 @@ def channel_parameters(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
         channel_contribution_func,
         channel_contribution_func_abs,
     )
+
+
+def channel_roas(
+    data: pd.DataFrame, mmm: DelayedSaturatedMMM, params: Dict[str, Any]
+) -> Any:
+
+    # ROAS
+    channel_contribution_original_scale = (
+        mmm.compute_channel_contribution_original_scale()
+    )
+    roas_samples = (
+        channel_contribution_original_scale.stack(sample=("chain", "draw")).sum("date")
+        / data[params["channel_columns"]].sum().to_numpy()[..., None]
+    )
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for channel in params["channel_columns"]:
+        sns.histplot(
+            roas_samples.sel(channel=channel).to_numpy(),
+            binwidth=0.05,
+            alpha=0.3,
+            kde=True,
+            ax=ax,
+        )
+    ax.set(title="Posterior ROAS distribution", xlabel="ROAS")
+
+    return fig

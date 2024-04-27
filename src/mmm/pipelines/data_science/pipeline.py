@@ -5,7 +5,12 @@ generated using Kedro 0.18.14
 
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import channel_parameters, model_diagnostics, model_training
+from .nodes import (
+    channel_contributions,
+    channel_roas,
+    model_diagnostics,
+    model_training,
+)
 
 
 def create_pipeline(**kwargs) -> Pipeline:
@@ -26,14 +31,14 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "model_posterior_predictive",
                     "model_components_contributions",
                     "model_contribution_breakdown",
-                    "model_contributions",
                 ],
                 name="model_diagnostics",
             ),
             node(
-                channel_parameters,
-                inputs=["fitted_model", "params:model_specification"],
+                channel_contributions,
+                inputs="fitted_model",
                 outputs=[
+                    "channel_contributions",
                     "channel_alphas",
                     "channel_lam",
                     "channel_contribution",
@@ -41,7 +46,13 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "channel_contribution_func",
                     "channel_contribution_func_abs",
                 ],
-                name="channel_parameters",
+                name="channel_contributions",
+            ),
+            node(
+                channel_roas,
+                inputs=["feature_data", "fitted_model", "params:model_specification"],
+                outputs="channel_roas",
+                name="channel_roas",
             ),
         ]
     )

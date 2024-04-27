@@ -1,4 +1,5 @@
 model_specification:
+  # Features
   features_to_drop:
     - facebook_I
     - search_clicks_P
@@ -6,10 +7,10 @@ model_specification:
     # - t
     - day_of_year
 
+  date_column: date_week
+
   objective_variable: revenue
 
-  adstock_max_lag: 8
-  
   channel_columns:
     - tv_S
     - ooh_S
@@ -27,8 +28,9 @@ model_specification:
     # - day_of_year
     - t
 
-  date_column: date_week
-  
+  # Model Configuration
+  adstock_max_lag: 8
+
   model_config:
     alpha:
       dist: Beta
@@ -67,13 +69,15 @@ model_specification:
           kwargs:
             sigma: 2
 
-  sampler_config:
-    progressbar: true
-
   validate_data: true
 
   yearly_seasonality: 2
 
-  target_accept: 0.99
-
-  chains: 4
+  # Sampler Configuration
+  sampler_config:
+    progressbar: true
+    nuts_sampler: numpyro
+    draws: 2000
+    target_accept: 0.95
+    chains: 4
+    random_seed: 123

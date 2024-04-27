@@ -19,5 +19,6 @@ traitlets<5.10.0
 jax==0.4.26
 jaxlib==0.4.26
 kedro-datasets[pandas.CSVDataset, pandas.ParquetDataset]==2.0.0
+kedro-viz==9.0.0
 numpyro==0.14.0
 pymc_marketing==0.5.0

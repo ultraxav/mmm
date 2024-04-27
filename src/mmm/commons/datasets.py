@@ -8,8 +8,10 @@ class DelayedSaturatedMMMModel(AbstractDataset[Any, Any]):
     def __init__(
         self,
         filepath: str,
+        metadata: dict[str, Any] = None,
     ) -> None:
         self._filepath = filepath
+        self.metadata = metadata
 
     def _describe(self) -> Dict[str, Any]:
         return {

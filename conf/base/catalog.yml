@@ -46,3 +46,27 @@ model_contribution_breakdown:
 model_contributions:
   type: pandas.CSVDataset
   filepath: data/07_model_output/model_contributions.csv
+
+channel_alphas:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/channel_alphas.jpeg
+
+channel_lam:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/channel_lam.jpeg
+
+channel_contribution:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/channel_contribution.jpeg
+
+channel_direct_contribution:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/channel_direct_contribution.jpeg
+
+channel_contribution_func:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/channel_contribution_func.jpeg
+
+channel_contribution_func_abs:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/channel_contribution_func_abs.jpeg

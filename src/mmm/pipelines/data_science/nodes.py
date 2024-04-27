@@ -3,12 +3,14 @@ This is a boilerplate pipeline 'data_science'
 generated using Kedro 0.18.14
 """
 
+import os
 import warnings
 from typing import Any, Dict
 
 import arviz as az
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 from pymc_marketing.mmm.delayed_saturated_mmm import DelayedSaturatedMMM
 
 warnings.filterwarnings("ignore")
@@ -47,9 +49,6 @@ def model_training(data: pd.DataFrame, params: Dict[str, Any]) -> DelayedSaturat
     mmm.fit(
         X=X,
         y=y,
-        target_accept=params["target_accept"],
-        chains=params["chains"],
-        random_seed=123,
     )
 
     mmm.sample_posterior_predictive(X, extend_idata=True, combined=True)
@@ -57,7 +56,7 @@ def model_training(data: pd.DataFrame, params: Dict[str, Any]) -> DelayedSaturat
     return mmm
 
 
-def model_diagnostics(mmm: DelayedSaturatedMMM) -> Any:
+def model_diagnostics(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
 
     # Model Summary
     model_summary = az.summary(
@@ -102,38 +101,17 @@ def model_diagnostics(mmm: DelayedSaturatedMMM) -> Any:
     groups = {
         "Base": [
             "intercept",
-            "event_1",
-            "event_2",
-            # "day_of_year",
-            "t",
             "sin_order_1",
             "sin_order_2",
             "cos_order_1",
             "cos_order_2",
-        ],
-        "tv_S": ["tv_S"],
-        "ooh_S": ["ooh_S"],
-        "print_S": ["print_S"],
-        "search_S": ["search_S"],
-        "facebook_S": ["facebook_S"],
-        "newsletter": ["newsletter"],
+        ]
+        + params["control_columns"],
+        **{channel: [channel] for channel in params["channel_columns"]},
     }
     fig = mmm.plot_grouped_contribution_breakdown_over_time(
         stack_groups=groups,
         original_scale=True,
-        # area_kwargs={
-        #     "color": {
-        #         "tv_S": "C0",
-        #         "ooh_S": "C1",
-        #         "print_S": "C2",
-        #         "search_S": "C3",
-        #         "facebook_S": "C4",
-        #         "newsletter": "C5",
-        #         "Base": "gray",
-        #         "Seasonality": "black",
-        #     },
-        #     "alpha": 0.7,
-        # },
     )
     model_contribution_breakdown = fig.suptitle(
         "Contribution Breakdown Over Time", fontsize=16
@@ -151,4 +129,37 @@ def model_diagnostics(mmm: DelayedSaturatedMMM) -> Any:
         model_components_contributions,
         model_contribution_breakdown,
         get_mean_contributions_over_time_df,
+    )
+
+
+def channel_parameters(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
+
+    # Channel Alphas
+    channel_alphas = mmm.plot_channel_parameter(param_name="alpha", figsize=(9, 5))
+
+    # Channel Lam
+    channel_lam = mmm.plot_channel_parameter(param_name="lam", figsize=(9, 5))
+
+    # Channel Contribution Share
+    channel_contribution = mmm.plot_channel_contribution_share_hdi(figsize=(7, 5))
+
+    # Channel Direct Contribution
+    channel_direct_contribution = mmm.plot_direct_contribution_curves()
+    [ax.set(xlabel="x") for ax in channel_direct_contribution.axes]
+
+    # Channel Contribution function
+    channel_contribution_func = mmm.plot_channel_contributions_grid(
+        start=0, stop=1.5, num=12
+    )
+    channel_contribution_func_abs = mmm.plot_channel_contributions_grid(
+        start=0, stop=1.5, num=12, absolute_xrange=True
+    )
+
+    return (
+        channel_alphas,
+        channel_lam,
+        channel_contribution,
+        channel_direct_contribution,
+        channel_contribution_func,
+        channel_contribution_func_abs,
     )

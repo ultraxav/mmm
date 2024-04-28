@@ -17,7 +17,6 @@ warnings.filterwarnings("ignore")
 
 
 def model_training(data: pd.DataFrame, params: Dict[str, Any]) -> DelayedSaturatedMMM:
-
     data = data.drop(columns=params["features_to_drop"])
 
     # # First, let’s compute the share of spend per channel:
@@ -57,7 +56,6 @@ def model_training(data: pd.DataFrame, params: Dict[str, Any]) -> DelayedSaturat
 
 
 def model_diagnostics(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
-
     # Model Summary
     model_summary = az.summary(
         data=mmm.fit_result,
@@ -127,7 +125,6 @@ def model_diagnostics(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
 
 
 def channel_contributions(mmm: DelayedSaturatedMMM) -> Any:
-
     # Model Mean Contributions Over Time
     get_mean_contributions_over_time_df = mmm.compute_mean_contributions_over_time(
         original_scale=True
@@ -168,7 +165,6 @@ def channel_contributions(mmm: DelayedSaturatedMMM) -> Any:
 def channel_roas(
     data: pd.DataFrame, mmm: DelayedSaturatedMMM, params: Dict[str, Any]
 ) -> Any:
-
     # ROAS
     channel_contribution_original_scale = (
         mmm.compute_channel_contribution_original_scale()
@@ -198,7 +194,6 @@ def out_of_sample_preds(
     mmm: DelayedSaturatedMMM,
     params: Dict[str, Any],
 ) -> Any:
-
     # Data
     data = data.drop(columns=params["features_to_drop"])
     X = data.drop(params["objective_variable"], axis=1)

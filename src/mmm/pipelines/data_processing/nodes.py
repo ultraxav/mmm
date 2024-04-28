@@ -7,7 +7,6 @@ import pandas as pd
 
 
 def data_cleaning(data: pd.DataFrame) -> pd.DataFrame:
-
     data = data.rename(columns={"DATE": "date_week"})
 
     data = pd.concat(
@@ -22,7 +21,6 @@ def data_cleaning(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def feature_engineering(data: pd.DataFrame) -> pd.DataFrame:
-
     data["t"] = range(data.shape[0])
 
     data["day_of_year"] = data["day_of_year"] / 365

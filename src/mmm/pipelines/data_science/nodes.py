@@ -1,8 +1,9 @@
 """
 This is a boilerplate pipeline 'data_science'
-generated using Kedro 0.18.14
+generated using Kedro 0.19.5
 """
 
+import datetime
 import warnings
 from typing import Any, Dict
 
@@ -189,3 +190,79 @@ def channel_roas(
     ax.set(title="Posterior ROAS distribution", xlabel="ROAS")
 
     return fig
+
+
+def out_of_sample_preds(
+    data: pd.DataFrame,
+    data_test: pd.DataFrame,
+    mmm: DelayedSaturatedMMM,
+    params: Dict[str, Any],
+) -> Any:
+
+    # Data
+    data = data.drop(columns=params["features_to_drop"])
+    X = data.drop(params["objective_variable"], axis=1)
+    y = data[params["objective_variable"]]
+
+    data_test = data_test.drop(columns=params["features_to_drop"])
+    X_out_of_sample = data.drop(params["objective_variable"], axis=1)
+
+    # Out of Sample Predictions
+    y_out_of_sample = mmm.sample_posterior_predictive(
+        X_pred=data_test, extend_idata=False
+    )
+    y_out_of_sample_with_adstock = mmm.sample_posterior_predictive(
+        X_pred=data_test, extend_idata=False, include_last_observations=True
+    )
+
+    # Plot Funcs
+    def plot_in_sample(X, y, ax, n_points: int = 15):
+        (
+            y.to_frame()
+            .set_index(X[params["date_column"]])
+            .iloc[-n_points:]
+            .plot(ax=ax, color="black", label="actuals")
+        )
+
+    def plot_out_of_sample(X_out_of_sample, y_out_of_sample, ax, color, label):
+        print(X_out_of_sample[params["date_column"]][0])
+        X_out_of_sample[params["date_column"]] = pd.to_datetime(
+            X_out_of_sample[params["date_column"]]
+        )
+        print(type(X_out_of_sample[params["date_column"]][0]))
+        y_out_of_sample_groupby = y_out_of_sample["y"].to_series().groupby("date")
+
+        lower, upper = quantiles = [0.025, 0.975]
+        conf = y_out_of_sample_groupby.quantile(quantiles).unstack()
+        ax.fill_between(
+            X_out_of_sample[params["date_column"]],  # .dt.to_pydatetime(),
+            conf[lower],
+            conf[upper],
+            alpha=0.25,
+            color=color,
+            label=f"{label} interval",
+        )
+
+        mean = y_out_of_sample_groupby.mean()
+        mean.plot(ax=ax, label=label, color=color, linestyle="--")
+        ax.set(
+            ylabel="Original Target Scale", title="Out of sample predictions for MMM"
+        )
+
+        return ax
+
+    # Plots
+    _, ax = plt.subplots()
+    plot_in_sample(X, y, ax=ax)
+    plot_out_of_sample(
+        X_out_of_sample, y_out_of_sample, ax=ax, label="out of sample", color="C0"
+    )
+    plot_out_of_sample(
+        X_out_of_sample,
+        y_out_of_sample_with_adstock,
+        ax=ax,
+        label="adstock out of sample",
+        color="C1",
+    )
+
+    return ax.legend()

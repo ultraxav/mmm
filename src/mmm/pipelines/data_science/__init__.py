@@ -1,6 +1,6 @@
 """
 This is a boilerplate pipeline 'data_science'
-generated using Kedro 0.18.14
+generated using Kedro 0.19.5
 """
 
 from .pipeline import create_pipeline

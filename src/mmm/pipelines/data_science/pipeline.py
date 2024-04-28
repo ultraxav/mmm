@@ -1,6 +1,6 @@
 """
 This is a boilerplate pipeline 'data_science'
-generated using Kedro 0.18.14
+generated using Kedro 0.19.5
 """
 
 from kedro.pipeline import Pipeline, node, pipeline
@@ -10,6 +10,7 @@ from .nodes import (
     channel_roas,
     model_diagnostics,
     model_training,
+    out_of_sample_preds,
 )
 
 
@@ -53,6 +54,17 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs=["feature_data", "fitted_model", "params:model_specification"],
                 outputs="channel_roas",
                 name="channel_roas",
+            ),
+            node(
+                out_of_sample_preds,
+                inputs=[
+                    "feature_data",
+                    "test_data",
+                    "fitted_model",
+                    "params:model_specification",
+                ],
+                outputs="out_of_sample_preds_plot",
+                name="out_of_sample_preds",
             ),
         ]
     )

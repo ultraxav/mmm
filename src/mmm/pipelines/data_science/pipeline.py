@@ -30,7 +30,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "model_summary",
                     "model_trace",
                     "model_posterior_predictive",
-                    "model_components_contributions",
+                    # "model_components_contributions",
                     "model_contribution_breakdown",
                 ],
                 name="model_diagnostics",
@@ -55,16 +55,16 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="channel_roas",
                 name="channel_roas",
             ),
-            node(
-                out_of_sample_preds,
-                inputs=[
-                    "feature_data",
-                    "test_data",
-                    "fitted_model",
-                    "params:model_specification",
-                ],
-                outputs="out_of_sample_preds_plot",
-                name="out_of_sample_preds",
-            ),
+            # node(
+            #     out_of_sample_preds,
+            #     inputs=[
+            #         "feature_data",
+            #         "test_data",
+            #         "fitted_model",
+            #         "params:model_specification",
+            #     ],
+            #     outputs="out_of_sample_preds_plot",
+            #     name="out_of_sample_preds",
+            # ),
         ]
     )

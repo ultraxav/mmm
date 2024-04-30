@@ -13,6 +13,8 @@ import pandas as pd
 import seaborn as sns
 from pymc_marketing.mmm.delayed_saturated_mmm import DelayedSaturatedMMM
 
+from ...extras import plots
+
 warnings.filterwarnings("ignore")
 
 
@@ -88,38 +90,19 @@ def model_diagnostics(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
     model_trace = plt.gcf().suptitle("Model Trace", fontsize=16).get_figure()
 
     # Model Posterior Predictive Check
-    model_posterior_predictive = mmm.plot_posterior_predictive(
-        original_scale=True
-    ).get_figure()
+    model_posterior_predictive = plots.posterior_predictive_check_plot(mmm, params)
 
     # Model Posterior Predictive Components
-    model_components_contributions = mmm.plot_components_contributions()
+    # model_components_contributions = mmm.plot_components_contributions()
 
     # Model Contribution Breakdown Over Time
-    groups = {
-        "Base": [
-            "intercept",
-            "sin_order_1",
-            "sin_order_2",
-            "cos_order_1",
-            "cos_order_2",
-        ]
-        + params["control_columns"],
-        **{channel: [channel] for channel in params["channel_columns"]},
-    }
-    fig = mmm.plot_grouped_contribution_breakdown_over_time(
-        stack_groups=groups,
-        original_scale=True,
-    )
-    model_contribution_breakdown = fig.suptitle(
-        "Contribution Breakdown Over Time", fontsize=16
-    ).get_figure()
+    model_contribution_breakdown = plots.contribution_breakdown_over_time_plot(mmm)
 
     return (
         model_summary,
         model_trace,
         model_posterior_predictive,
-        model_components_contributions,
+        # model_components_contributions,
         model_contribution_breakdown,
     )
 

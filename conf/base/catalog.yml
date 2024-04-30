@@ -8,9 +8,9 @@ raw_data:
   filepath: data/01_raw/dt_simulated_weekly.csv
   metadata:
     kedro-viz:
-      layer: raw
+      layer: Data Ingestion
       preview_args:
-          nrows: 10
+          nrows: 1000
 
 primary_data:
   type: pandas.ParquetDataset
@@ -34,7 +34,7 @@ test_data:
       layer: Feature Engineering
 
 fitted_model:
-  type: mmm.commons.datasets.DelayedSaturatedMMMModel
+  type: mmm.extras.datasets.DelayedSaturatedMMMModel
   filepath: data/06_models/fitted_model.nc
   metadata:
     kedro-viz:
@@ -46,6 +46,8 @@ model_summary:
   metadata:
     kedro-viz:
       layer: Model Training
+      preview_args:
+          nrows: 1000
 
 model_trace:
   type: matplotlib.MatplotlibWriter
@@ -55,22 +57,22 @@ model_trace:
       layer: Model Training
 
 model_posterior_predictive:
-  type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/model_posterior_predictive.jpeg
+  type: plotly.JSONDataset
+  filepath: data/07_model_output/model_posterior_predictive.json
   metadata:
     kedro-viz:
       layer: Model Training
 
-model_components_contributions:
-  type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/model_components_contributions.jpeg
-  metadata:
-    kedro-viz:
-      layer: Model Training
+# model_components_contributions:
+#   type: matplotlib.MatplotlibWriter
+#   filepath: data/07_model_output/model_components_contributions.jpeg
+#   metadata:
+#     kedro-viz:
+#       layer: Model Training
 
 model_contribution_breakdown:
-  type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/model_contribution_breakdown.jpeg
+  type: plotly.JSONDataset
+  filepath: data/07_model_output/model_contribution_breakdown.json
   metadata:
     kedro-viz:
       layer: Model Training
@@ -81,6 +83,8 @@ channel_contributions:
   metadata:
     kedro-viz:
       layer: Channel Contributions
+      preview_args:
+          nrows: 1000
 
 channel_alphas:
   type: matplotlib.MatplotlibWriter

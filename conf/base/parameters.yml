@@ -3,9 +3,9 @@ model_specification:
   features_to_drop:
     - facebook_I
     - search_clicks_P
-    - competitor_sales_B
+    # - competitor_sales_B
     # - t
-    - day_of_year
+    # - day_of_year
 
   date_column: date_week
 
@@ -18,14 +18,13 @@ model_specification:
     # - facebook_I
     # - search_clicks_P
     - search_S
-    # - competitor_sales_B
     - facebook_S
     - newsletter
 
   control_columns:
-    - event1
-    - event2
-    # - day_of_year
+    - events
+    # - competitor_sales_B
+    - day_of_year
     - t
 
   # Model Configuration
@@ -71,7 +70,7 @@ model_specification:
 
   validate_data: true
 
-  yearly_seasonality: 2
+  yearly_seasonality: 1
 
   # Sampler Configuration
   sampler_config:

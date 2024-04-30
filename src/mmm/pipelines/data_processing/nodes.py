@@ -9,11 +9,15 @@ import pandas as pd
 def data_cleaning(data: pd.DataFrame) -> pd.DataFrame:
     data = data.rename(columns={"DATE": "date_week"})
 
-    data = pd.concat(
-        [data, pd.get_dummies(data["events"], dtype=int).iloc[:, :-1]], axis=1
-    )
+    # data = pd.concat(
+    #     [data, pd.get_dummies(data["events"], dtype=int).iloc[:, :-1]], axis=1
+    # )
 
-    data = data.drop(columns=["events"])
+    # data = data.drop(columns=["events"])
+
+    data.loc[data["events"] != "na", "events"] = 1
+    data.loc[data["events"] == "na", "events"] = 0
+    data["events"] = data["events"].astype("int64")
 
     data["day_of_year"] = pd.to_datetime(data["date_week"]).dt.dayofyear
 

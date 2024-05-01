@@ -63,20 +63,6 @@ model_posterior_predictive:
     kedro-viz:
       layer: Model Training
 
-# model_components_contributions:
-#   type: matplotlib.MatplotlibWriter
-#   filepath: data/07_model_output/model_components_contributions.jpeg
-#   metadata:
-#     kedro-viz:
-#       layer: Model Training
-
-model_contribution_breakdown:
-  type: plotly.JSONDataset
-  filepath: data/07_model_output/model_diagnostics/model_contribution_breakdown.json
-  metadata:
-    kedro-viz:
-      layer: Model Training
-
 model_summary_plot:
   type: plotly.JSONDataset
   filepath: data/07_model_output/model_diagnostics/model_summary_plot.json
@@ -86,23 +72,37 @@ model_summary_plot:
 
 channel_contributions:
   type: pandas.CSVDataset
-  filepath: data/07_model_output/model_diagnostics/model_contributions.csv
+  filepath: data/07_model_output/channel_contributions/model_contributions.csv
   metadata:
     kedro-viz:
       layer: Channel Contributions
       preview_args:
           nrows: 1000
 
-channel_alphas:
-  type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/channel_alphas.jpeg
+channel_contribution_breakdown:
+  type: plotly.JSONDataset
+  filepath: data/07_model_output/channel_contributions/channel_contribution_breakdown.json
+  metadata:
+    kedro-viz:
+      layer: Channel Contributions
+
+channel_alpha:
+  type: plotly.JSONDataset
+  filepath: data/07_model_output/channel_contributions/channel_alpha.json
   metadata:
     kedro-viz:
       layer: Channel Contributions
 
 channel_lam:
-  type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/channel_lam.jpeg
+  type: plotly.JSONDataset
+  filepath: data/07_model_output/channel_contributions/channel_lam.json
+  metadata:
+    kedro-viz:
+      layer: Channel Contributions
+
+channel_beta:
+  type: plotly.JSONDataset
+  filepath: data/07_model_output/channel_contributions/channel_beta.json
   metadata:
     kedro-viz:
       layer: Channel Contributions

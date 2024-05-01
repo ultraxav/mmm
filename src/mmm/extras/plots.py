@@ -226,10 +226,36 @@ def model_summary_plot(mmm: DelayedSaturatedMMM) -> go.Figure:
         col=1,
     )
 
-    # fig.update_layout(height=1000, width=1500, title_text="Model Summary Plot")
-
     fig.update_layout(
         title=f"Model Summary - R2 Score: {round(r2, 4)} - MAPE: {round(mape, 4)}",
+    )
+
+    return fig
+
+
+def plot_channel_parameter(mmm: DelayedSaturatedMMM, param_name: str) -> go.Figure:
+    if param_name not in ["alpha", "lam", "beta_channel"]:
+        raise ValueError(f"Invalid parameter name: {param_name}")
+
+    param_samples_df = pd.DataFrame(
+        data=az.extract(data=mmm.fit_result, var_names=[param_name]).T,
+        columns=mmm.channel_columns,
+    )
+
+    fig = go.Figure()
+
+    for param in param_samples_df.columns:
+        fig.add_trace(
+            go.Violin(
+                y=param_samples_df[param],
+                name=param,
+                box_visible=True,
+                meanline_visible=True,
+            )
+        )
+
+    fig.update_layout(
+        title=f"Posterior Distribution: {param_name} Parameter",
     )
 
     return fig

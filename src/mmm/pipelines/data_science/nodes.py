@@ -92,12 +92,6 @@ def model_diagnostics(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
     # Model Posterior Predictive Check
     model_posterior_predictive = plots.posterior_predictive_check_plot(mmm, params)
 
-    # Model Posterior Predictive Components
-    # model_components_contributions = mmm.plot_components_contributions()
-
-    # Model Contribution Breakdown Over Time
-    model_contribution_breakdown = plots.contribution_breakdown_over_time_plot(mmm)
-
     # Model Summary Plot
     model_summary_plot = plots.model_summary_plot(mmm)
 
@@ -105,8 +99,6 @@ def model_diagnostics(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
         model_summary,
         model_trace,
         model_posterior_predictive,
-        # model_components_contributions,
-        model_contribution_breakdown,
         model_summary_plot,
     )
 
@@ -117,11 +109,17 @@ def channel_contributions(mmm: DelayedSaturatedMMM) -> Any:
         original_scale=True
     ).reset_index()
 
-    # Channel Alphas
-    channel_alphas = mmm.plot_channel_parameter(param_name="alpha", figsize=(9, 5))
+    # Channel Contribution Breakdown Over Time
+    channel_contribution_breakdown = plots.contribution_breakdown_over_time_plot(mmm)
 
-    # Channel Lam
-    channel_lam = mmm.plot_channel_parameter(param_name="lam", figsize=(9, 5))
+    # Channel Alphas
+    channel_alpha = plots.plot_channel_parameter(mmm, "alpha")
+
+    # # Channel Lam
+    channel_lam = plots.plot_channel_parameter(mmm, "lam")
+
+    # # Channel Beta
+    channel_beta = plots.plot_channel_parameter(mmm, "beta_channel")
 
     # Channel Contribution Share
     channel_contribution = mmm.plot_channel_contribution_share_hdi(figsize=(7, 5))
@@ -140,8 +138,10 @@ def channel_contributions(mmm: DelayedSaturatedMMM) -> Any:
 
     return (
         get_mean_contributions_over_time_df,
-        channel_alphas,
+        channel_contribution_breakdown,
+        channel_alpha,
         channel_lam,
+        channel_beta,
         channel_contribution,
         channel_direct_contribution,
         channel_contribution_func,

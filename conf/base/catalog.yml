@@ -42,7 +42,7 @@ fitted_model:
 
 model_summary:
   type: pandas.CSVDataset
-  filepath: data/07_model_output/model_summary.csv
+  filepath: data/07_model_output/model_diagnostics/model_summary.csv
   metadata:
     kedro-viz:
       layer: Model Training
@@ -51,14 +51,14 @@ model_summary:
 
 model_trace:
   type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/model_trace.jpeg
+  filepath: data/07_model_output/model_diagnostics/model_trace.jpeg
   metadata:
     kedro-viz:
       layer: Model Training
 
 model_posterior_predictive:
   type: plotly.JSONDataset
-  filepath: data/07_model_output/model_posterior_predictive.json
+  filepath: data/07_model_output/model_diagnostics/model_posterior_predictive.json
   metadata:
     kedro-viz:
       layer: Model Training
@@ -72,14 +72,21 @@ model_posterior_predictive:
 
 model_contribution_breakdown:
   type: plotly.JSONDataset
-  filepath: data/07_model_output/model_contribution_breakdown.json
+  filepath: data/07_model_output/model_diagnostics/model_contribution_breakdown.json
+  metadata:
+    kedro-viz:
+      layer: Model Training
+
+model_summary_plot:
+  type: plotly.JSONDataset
+  filepath: data/07_model_output/model_diagnostics/model_summary_plot.json
   metadata:
     kedro-viz:
       layer: Model Training
 
 channel_contributions:
   type: pandas.CSVDataset
-  filepath: data/07_model_output/model_contributions.csv
+  filepath: data/07_model_output/model_diagnostics/model_contributions.csv
   metadata:
     kedro-viz:
       layer: Channel Contributions

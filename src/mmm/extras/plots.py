@@ -3,7 +3,9 @@ from typing import Any, Dict
 import arviz as az
 import pandas as pd
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 from pymc_marketing.mmm.delayed_saturated_mmm import DelayedSaturatedMMM
+from sklearn.metrics import mean_absolute_percentage_error, r2_score
 
 
 def posterior_predictive_check_plot(
@@ -24,8 +26,15 @@ def posterior_predictive_check_plot(
     )
 
     data = {
-        "date_week": mmm.idata["fit_data"][params["date_column"]].to_numpy(),
-        "revenue": mmm.idata["fit_data"]["y"].to_numpy(),
+        "date_week": mmm.idata["fit_data"]["date_week"].to_numpy(),
+        f'{params["objective_variable"]}_actuals': mmm.idata["fit_data"][
+            "y"
+        ].to_numpy(),
+        f'{params["objective_variable"]}_predicted': mmm.compute_mean_contributions_over_time(
+            original_scale=True
+        )
+        .sum(axis=1)
+        .to_numpy(),
         "likelihood_hdi_94_0": likelihood_hdi_94[:, 0],
         "likelihood_hdi_94_1": likelihood_hdi_94[:, 1],
         "likelihood_hdi_50_0": likelihood_hdi_50[:, 0],
@@ -82,13 +91,21 @@ def posterior_predictive_check_plot(
         )
     )
 
-    # Add the price chart
+    # KPI
     fig.add_trace(
         go.Scatter(
             x=data[params["date_column"]],
-            y=data[params["objective_variable"]],
-            name=params["objective_variable"],
+            y=data[f'{params["objective_variable"]}_actuals'],
+            name=f'{params["objective_variable"]}_actuals',
             line=dict(color="black"),
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=data["date_week"],
+            y=data[f'{params["objective_variable"]}_predicted'],
+            name=f'{params["objective_variable"]}_predicted',
+            line=dict(color="red"),
         )
     )
 
@@ -131,6 +148,88 @@ def contribution_breakdown_over_time_plot(
             stackgroup="one",  # define stack group
             name="total",
         )
+    )
+
+    fig.update_layout(
+        title="Contribution Breakdown over Time",
+    )
+
+    return fig
+
+
+def model_summary_plot(mmm: DelayedSaturatedMMM) -> go.Figure:
+    data = {
+        "y_actuals": mmm.idata["fit_data"]["y"].to_numpy(),
+        "y_predicted": mmm.compute_mean_contributions_over_time(original_scale=True)
+        .sum(axis=1)
+        .to_numpy(),
+    }
+    data["residuals"] = data["y_actuals"] - data["y_predicted"]
+
+    r2 = r2_score(data["y_actuals"], data["y_predicted"])
+    mape = mean_absolute_percentage_error(data["y_actuals"], data["y_predicted"])
+
+    fig = make_subplots(rows=4, cols=1)
+
+    fig.add_trace(
+        go.Scatter(
+            x=data["y_predicted"],
+            y=data["y_actuals"],
+            mode="markers",
+            name="Predicted vs actuals",
+        ),
+        row=1,
+        col=1,
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=data["y_predicted"],
+            y=data["y_predicted"],
+            mode="lines",
+            name="Fitted Prediction",
+        ),
+        row=1,
+        col=1,
+    )
+
+    fig.add_trace(
+        go.Histogram(x=data["residuals"], name="Residuals Distribution"), row=2, col=1
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=list(range(1, len(data["y_predicted"]), 1)),
+            y=data["y_predicted"],
+            mode="lines",
+            name="Predicted",
+        ),
+        row=3,
+        col=1,
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=list(range(1, len(data["y_actuals"]), 1)),
+            y=data["y_actuals"],
+            mode="lines",
+            name="Actuals",
+        ),
+        row=3,
+        col=1,
+    )
+    fig.add_trace(
+        go.Bar(
+            x=list(range(1, len(data["residuals"]), 1)),
+            y=data["residuals"],
+            name="Residuals",
+        ),
+        row=4,
+        col=1,
+    )
+
+    # fig.update_layout(height=1000, width=1500, title_text="Model Summary Plot")
+
+    fig.update_layout(
+        title=f"Model Summary - R2 Score: {round(r2, 4)} - MAPE: {round(mape, 4)}",
     )
 
     return fig

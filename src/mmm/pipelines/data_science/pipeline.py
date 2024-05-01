@@ -32,6 +32,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "model_posterior_predictive",
                     # "model_components_contributions",
                     "model_contribution_breakdown",
+                    "model_summary_plot",
                 ],
                 name="model_diagnostics",
             ),

@@ -98,12 +98,16 @@ def model_diagnostics(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
     # Model Contribution Breakdown Over Time
     model_contribution_breakdown = plots.contribution_breakdown_over_time_plot(mmm)
 
+    # Model Summary Plot
+    model_summary_plot = plots.model_summary_plot(mmm)
+
     return (
         model_summary,
         model_trace,
         model_posterior_predictive,
         # model_components_contributions,
         model_contribution_breakdown,
+        model_summary_plot,
     )
 
 

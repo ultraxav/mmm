@@ -70,7 +70,7 @@ model_summary_plot:
     kedro-viz:
       layer: Model Training
 
-channel_contributions:
+channel_contribution_summary:
   type: pandas.CSVDataset
   filepath: data/07_model_output/channel_contributions/model_contributions.csv
   metadata:
@@ -108,36 +108,22 @@ channel_beta:
       layer: Channel Contributions
 
 channel_contribution:
-  type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/channel_contribution.jpeg
+  type: plotly.JSONDataset
+  filepath: data/07_model_output/channel_contributions/channel_contribution.json
   metadata:
     kedro-viz:
       layer: Channel Contributions
 
 channel_direct_contribution:
   type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/channel_direct_contribution.jpeg
-  metadata:
-    kedro-viz:
-      layer: Channel Contributions
-
-channel_contribution_func:
-  type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/channel_contribution_func.jpeg
-  metadata:
-    kedro-viz:
-      layer: Channel Contributions
-
-channel_contribution_func_abs:
-  type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/channel_contribution_func_abs.jpeg
+  filepath: data/07_model_output/channel_contributions/channel_direct_contribution.jpeg
   metadata:
     kedro-viz:
       layer: Channel Contributions
 
 channel_roas:
-  type: matplotlib.MatplotlibWriter
-  filepath: data/07_model_output/channel_roas.jpeg
+  type: plotly.JSONDataset
+  filepath: data/07_model_output/channel_contributions/channel_roas.json
   metadata:
     kedro-viz:
       layer: Channel Roas

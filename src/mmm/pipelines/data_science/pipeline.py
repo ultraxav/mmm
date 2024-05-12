@@ -7,10 +7,8 @@ from kedro.pipeline import Pipeline, node, pipeline
 
 from .nodes import (
     channel_contributions,
-    channel_roas,
     model_diagnostics,
     model_training,
-    out_of_sample_preds,
 )
 
 
@@ -36,25 +34,18 @@ def create_pipeline(**kwargs) -> Pipeline:
             ),
             node(
                 channel_contributions,
-                inputs="fitted_model",
+                inputs=["feature_data", "fitted_model", "params:model_specification"],
                 outputs=[
-                    "channel_contributions",
+                    "channel_contribution_summary",
                     "channel_contribution_breakdown",
                     "channel_alpha",
                     "channel_lam",
                     "channel_beta",
                     "channel_contribution",
                     "channel_direct_contribution",
-                    "channel_contribution_func",
-                    "channel_contribution_func_abs",
+                    "channel_roas",
                 ],
                 name="channel_contributions",
-            ),
-            node(
-                channel_roas,
-                inputs=["feature_data", "fitted_model", "params:model_specification"],
-                outputs="channel_roas",
-                name="channel_roas",
             ),
             # node(
             #     out_of_sample_preds,

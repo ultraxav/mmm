@@ -157,7 +157,7 @@ def contribution_breakdown_over_time_plot(
     return fig
 
 
-def model_summary_plot(mmm: DelayedSaturatedMMM) -> go.Figure:
+def model_summary_plot(mmm: DelayedSaturatedMMM, title: str = None) -> go.Figure:
     data = {
         "y_actuals": mmm.idata["fit_data"]["y"].to_numpy(),
         "y_predicted": mmm.compute_mean_contributions_over_time(original_scale=True)
@@ -227,7 +227,7 @@ def model_summary_plot(mmm: DelayedSaturatedMMM) -> go.Figure:
     )
 
     fig.update_layout(
-        title=f"Model Summary - R2 Score: {round(r2, 4)} - MAPE: {round(mape, 4)}",
+        title=f"{title} - Model Summary - R2 Score: {round(r2, 4)} - MAPE: {round(mape, 4)}",
     )
 
     return fig
@@ -256,6 +256,73 @@ def plot_channel_parameter(mmm: DelayedSaturatedMMM, param_name: str) -> go.Figu
 
     fig.update_layout(
         title=f"Posterior Distribution: {param_name} Parameter",
+    )
+
+    return fig
+
+
+def plot_channel_contribution(
+    mmm: DelayedSaturatedMMM, channel_names: list
+) -> go.Figure:
+    channel_contribution = mmm.compute_channel_contribution_original_scale()
+
+    numerator = channel_contribution.sum(["date"])
+    denominator = numerator.sum("channel")
+
+    channel_contribution_share = numerator / denominator
+
+    data = pd.DataFrame(channel_contribution_share.to_numpy().mean(axis=0))
+
+    data.columns = channel_names
+
+    fig = go.Figure()
+
+    for channel in data.columns:
+        fig.add_trace(
+            go.Violin(
+                y=data[channel],
+                name=channel,
+                box_visible=True,
+                meanline_visible=True,
+            )
+        )
+
+    fig.update_layout(
+        title=f"Channel Contribution Distribution",
+    )
+
+    return fig
+
+
+def plot_channel_roas(
+    data: pd.DataFrame, mmm: DelayedSaturatedMMM, channel_names: list
+) -> go.Figure:
+    channel_contribution_original_scale = (
+        mmm.compute_channel_contribution_original_scale()
+    )
+    roas_samples = (
+        channel_contribution_original_scale.stack(sample=("chain", "draw")).sum("date")
+        / data[channel_names].sum().to_numpy()[..., None]
+    )
+
+    roas_samples = pd.DataFrame(roas_samples.T)
+
+    roas_samples.columns = channel_names
+
+    fig = go.Figure()
+
+    for channel in roas_samples.columns:
+        fig.add_trace(
+            go.Violin(
+                y=roas_samples[channel],
+                name=channel,
+                box_visible=True,
+                meanline_visible=True,
+            )
+        )
+
+    fig.update_layout(
+        title=f"Channel ROAS Distribution",
     )
 
     return fig

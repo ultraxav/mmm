@@ -152,3 +152,6 @@ venv.bak/
 
 # notebooks
 notebooks/
+
+# ruff stuff
+.ruff_cache/

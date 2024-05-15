@@ -3,14 +3,12 @@ This is a boilerplate pipeline 'data_science'
 generated using Kedro 0.19.5
 """
 
-import datetime
 import warnings
 from typing import Any, Dict
 
 import arviz as az
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 from pymc_marketing.mmm.delayed_saturated_mmm import DelayedSaturatedMMM
 
 from ...extras import plots
@@ -93,7 +91,13 @@ def model_diagnostics(mmm: DelayedSaturatedMMM, params: Dict[str, Any]) -> Any:
     model_posterior_predictive = plots.posterior_predictive_check_plot(mmm, params)
 
     # Model Summary Plot
-    model_summary_plot = plots.model_summary_plot(mmm, "In-Sample Data")
+    y_actuals = mmm.idata["fit_data"]["y"].to_numpy()
+    y_predicted = (
+        mmm.compute_mean_contributions_over_time(original_scale=True)
+        .sum(axis=1)
+        .to_numpy()
+    )
+    model_summary_plot = plots.model_summary_plot(y_actuals, y_predicted, "In-Sample")
 
     return (
         model_summary,

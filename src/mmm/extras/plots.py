@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
 import arviz as az
+import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
@@ -119,7 +120,7 @@ def posterior_predictive_check_plot(
 
 
 def contribution_breakdown_over_time_plot(
-    mmm: DelayedSaturatedMMM, original_scale=True
+    mmm: DelayedSaturatedMMM, original_scale: bool = True
 ) -> go.Figure:
     data = mmm.compute_mean_contributions_over_time(original_scale=original_scale)
 
@@ -157,12 +158,12 @@ def contribution_breakdown_over_time_plot(
     return fig
 
 
-def model_summary_plot(mmm: DelayedSaturatedMMM, title: str = None) -> go.Figure:
+def model_summary_plot(
+    y_actuals: np.ndarray, y_predicted: np.ndarray, title: str = None
+) -> go.Figure:
     data = {
-        "y_actuals": mmm.idata["fit_data"]["y"].to_numpy(),
-        "y_predicted": mmm.compute_mean_contributions_over_time(original_scale=True)
-        .sum(axis=1)
-        .to_numpy(),
+        "y_actuals": y_actuals,
+        "y_predicted": y_predicted,
     }
     data["residuals"] = data["y_actuals"] - data["y_predicted"]
 
@@ -227,7 +228,7 @@ def model_summary_plot(mmm: DelayedSaturatedMMM, title: str = None) -> go.Figure
     )
 
     fig.update_layout(
-        title=f"{title} - Model Summary - R2 Score: {round(r2, 4)} - MAPE: {round(mape, 4)}",
+        title=f"{title} Data - Model Summary - R2 Score: {round(r2, 4)} - MAPE: {round(mape, 4)}",
     )
 
     return fig

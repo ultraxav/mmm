@@ -161,6 +161,9 @@ def contribution_breakdown_over_time_plot(
 def model_summary_plot(
     y_actuals: np.ndarray, y_predicted: np.ndarray, title: str = None
 ) -> go.Figure:
+    y_actuals = y_actuals.ravel()
+    y_predicted = y_predicted.ravel()
+
     data = {
         "y_actuals": y_actuals,
         "y_predicted": y_predicted,
@@ -324,6 +327,85 @@ def plot_channel_roas(
 
     fig.update_layout(
         title=f"Channel ROAS Distribution",
+    )
+
+    return fig
+
+
+def plot_channel_roas(
+    data: pd.DataFrame, mmm: DelayedSaturatedMMM, channel_names: list
+) -> go.Figure:
+    channel_contribution_original_scale = (
+        mmm.compute_channel_contribution_original_scale()
+    )
+    roas_samples = (
+        channel_contribution_original_scale.stack(sample=("chain", "draw")).sum("date")
+        / data[channel_names].sum().to_numpy()[..., None]
+    )
+
+    roas_samples = pd.DataFrame(roas_samples.T)
+
+    roas_samples.columns = channel_names
+
+    fig = go.Figure()
+
+    for channel in roas_samples.columns:
+        fig.add_trace(
+            go.Violin(
+                y=roas_samples[channel],
+                name=channel,
+                box_visible=True,
+                meanline_visible=True,
+            )
+        )
+
+    fig.update_layout(
+        title=f"Channel ROAS Distribution",
+    )
+
+    return fig
+
+
+def plot_out_of_sample_preds(
+    data_in_sample: pd.DataFrame,
+    data_out_sample: pd.DataFrame,
+    y_out_of_sample_with_adstock: np.ndarray,
+    params: Dict[str, Any],
+) -> go.Figure:
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=data_in_sample[params["date_column"]],
+            y=data_in_sample[params["objective_variable"]],
+            mode="lines",
+            name=f'In-Sample {params["objective_variable"]}',
+            line=dict(color="black"),
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=data_out_sample[params["date_column"]],
+            y=data_out_sample[params["objective_variable"]],
+            mode="lines",
+            name=f'Out-of-Sample Actual {params["objective_variable"]}',
+            line=dict(color="black"),
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=data_out_sample[params["date_column"]],
+            y=y_out_of_sample_with_adstock,
+            mode="lines",
+            name="Out-of-Sample Prediction",
+            line=dict(color="red"),
+        )
+    )
+
+    fig.update_layout(
+        title="Out of Sample Predictions",
+        xaxis_title="Date",
+        yaxis_title=params["objective_variable"],
     )
 
     return fig

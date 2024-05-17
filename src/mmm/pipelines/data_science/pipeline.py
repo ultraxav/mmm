@@ -9,7 +9,7 @@ from .nodes import (
     channel_contributions,
     model_diagnostics,
     model_training,
-    out_of_sample_preds
+    out_of_sample_preds,
 )
 
 
@@ -56,7 +56,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "fitted_model",
                     "params:model_specification",
                 ],
-                outputs="out_of_sample_preds_plot",
+                outputs=["out_of_sample_preds_plot", "out_of_sample_summary_plot"],
                 name="out_of_sample_preds",
             ),
         ]

@@ -121,10 +121,10 @@ def channel_contributions(
     # Channel Alphas
     channel_alpha = plots.plot_channel_parameter(mmm, "alpha")
 
-    # # Channel Lam
+    # Channel Lam
     channel_lam = plots.plot_channel_parameter(mmm, "lam")
 
-    # # Channel Beta
+    # Channel Beta
     channel_beta = plots.plot_channel_parameter(mmm, "beta_channel")
 
     # Channel Contribution Share
@@ -160,14 +160,21 @@ def out_of_sample_preds(
     data_in_sample = data_in_sample.drop(columns=params["features_to_drop"])
     data_out_sample = data_out_sample.drop(columns=params["features_to_drop"])
 
-    y_out_of_sample = mmm.sample_posterior_predictive(
-        X_pred=data_out_sample, extend_idata=False
-    )
     y_out_of_sample_with_adstock = mmm.sample_posterior_predictive(
         X_pred=data_out_sample, extend_idata=False, include_last_observations=True
     )
+    y_out_of_sample_with_adstock = (
+        y_out_of_sample_with_adstock["y"].to_series().groupby("date").mean()
+    )
 
-    y_out_of_sample = y_out_of_sample["y"].to_series().groupby("date").mean()
-    y_out_of_sample_with_adstock = y_out_of_sample_with_adstock["y"].to_series().groupby("date").mean()
+    out_of_sample_preds_plot = plots.plot_out_of_sample_preds(
+        data_in_sample, data_out_sample, y_out_of_sample_with_adstock, params
+    )
 
-    return fig
+    out_of_sample_summary = plots.model_summary_plot(
+        data_out_sample[params["objective_variable"]],
+        y_out_of_sample_with_adstock,
+        "Out-of-Sample",
+    )
+
+    return out_of_sample_preds_plot, out_of_sample_summary

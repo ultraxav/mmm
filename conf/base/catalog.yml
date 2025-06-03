@@ -130,14 +130,14 @@ channel_roas:
 
 out_of_sample_preds_plot:
   type: plotly.JSONDataset
-  filepath: data/07_model_output/out_of_sample_preds/out_of_sample_preds_plot.jpeg
+  filepath: data/07_model_output/out_of_sample_preds/out_of_sample_preds_plot.json
   metadata:
     kedro-viz:
       layer: Out of Sample Predictions
 
 out_of_sample_summary_plot:
   type: plotly.JSONDataset
-  filepath: data/07_model_output/out_of_sample_preds/out_of_sample_summary_plot.jpeg
+  filepath: data/07_model_output/out_of_sample_preds/out_of_sample_summary_plot.json
   metadata:
     kedro-viz:
       layer: Out of Sample Predictions

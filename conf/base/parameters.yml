@@ -4,8 +4,8 @@ model_specification:
     - facebook_I
     - search_clicks_P
     # - competitor_sales_B
-    # - t
-    # - day_of_year
+    - t
+    - day_of_year
 
   date_column: date_week
 
@@ -24,8 +24,8 @@ model_specification:
   control_columns:
     - events
     # - competitor_sales_B
-    - day_of_year
-    - t
+    # - day_of_year
+    # - t
 
   # Model Configuration
   adstock_max_lag: 8

@@ -1,1 +1,1 @@
-{"feature_data": {"rows": 167, "columns": 14, "file_size": 21941}, "test_data": {"rows": 41, "columns": 14, "file_size": 13056}}
+{"raw_data": {"rows": 208, "columns": 12, "file_size": 20331}, "primary_data": {"rows": 208, "columns": 13, "file_size": 22527}, "feature_data": {"rows": 167, "columns": 14, "file_size": 21941}, "test_data": {"rows": 41, "columns": 14, "file_size": 13056}, "channel_contribution_summary": {"rows": 167, "columns": 13, "file_size": 37053}, "model_summary": {"rows": 25, "columns": 10, "file_size": 1873}}
